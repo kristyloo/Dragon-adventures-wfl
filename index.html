@@ -56,13 +56,17 @@ body {
   background: #1e293b;
   border: 2px solid #334155;
   border-radius: 14px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+
   font-size: 12px;
   padding: 4px;
   overflow: hidden;
+
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25);
 }
 
 .slot img {
@@ -132,11 +136,19 @@ body {
   cursor: pointer;
   text-align: center;
   border: 2px solid transparent;
+  transition: 0.2s;
 }
 
 .dragon-card img {
   width: 60px;
   height: 60px;
+  border-radius: 8px;
+}
+
+.dragon-card.selected {
+  border: 2px solid #38bdf8;
+  box-shadow: 0 0 15px #38bdf8;
+  transform: scale(1.05);
 }
 
 .bar {
@@ -152,8 +164,8 @@ body {
   height: 100%;
   width: 50%;
   background: #22c55e;
+  transition: 0.3s;
 }
-
 </style>
 </head>
 
@@ -227,53 +239,52 @@ const dragons = [
   { name:"Cocovira", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/4d/Cocovira_Icon.png"}
 ];
 
-let you = [], them = [], activeSide = null, pendingDragon = null;
-const MAX = 9;
+let you=[], them=[], activeSide=null, pendingDragon=null;
+const MAX=9;
 
-const popup = document.getElementById("popup");
-const overlay = document.getElementById("overlay");
-const optionsPopup = document.getElementById("optionsPopup");
+const popup=document.getElementById("popup");
+const overlay=document.getElementById("overlay");
+const optionsPopup=document.getElementById("optionsPopup");
 
-const mut = document.getElementById("mut");
-const legC = document.getElementById("legC");
-const legE = document.getElementById("legE");
+const mut=document.getElementById("mut");
+const legC=document.getElementById("legC");
+const legE=document.getElementById("legE");
 
-const wfl = document.getElementById("wfl");
-const wflText = document.getElementById("wflText");
-const result = document.getElementById("result");
+const wfl=document.getElementById("wfl");
+const wflText=document.getElementById("wflText");
+const result=document.getElementById("result");
 
 function getFinalValue(item){
-  let base = parseFloat(item.base.value) * (item.base.value.includes("M") ? 1e6 : 1e3);
-  let extra = 0;
-  if(item.mutation) extra += 500000;
-  if(item.legColor) extra += 1000000;
-  if(item.legEye) extra += 1000000;
-  return base + extra;
+  let base=parseFloat(item.base.value)*(item.base.value.includes("M")?1e6:1e3);
+  let extra=0;
+  if(item.mutation) extra+=500000;
+  if(item.legColor) extra+=1000000;
+  if(item.legEye) extra+=1000000;
+  return base+extra;
 }
 
 function render(){
-  draw("youSlots", you, 1);
-  draw("themSlots", them, 2);
+  draw("youSlots",you,1);
+  draw("themSlots",them,2);
 }
 
-function draw(id, list, side){
-  let box = document.getElementById(id);
-  box.innerHTML = "";
-
+function draw(id,list,side){
+  let box=document.getElementById(id);
+  box.innerHTML="";
   for(let i=0;i<MAX;i++){
-    let slot = document.createElement("div");
-    slot.className = "slot";
+    let slot=document.createElement("div");
+    slot.className="slot";
 
-    let item = list[i];
+    let item=list[i];
 
     if(item){
-      slot.innerHTML = `
+      slot.innerHTML=`
         <img src="${item.base.img}">
         <small>${item.base.name}</small>
         <button class="remove" onclick="remove(${side},${i})">X</button>
       `;
     } else {
-      slot.innerHTML = `<button class="add" onclick="openPopup(${side})">+</button>`;
+      slot.innerHTML=`<button class="add" onclick="openPopup(${side})">+</button>`;
     }
 
     box.appendChild(slot);
@@ -281,46 +292,54 @@ function draw(id, list, side){
 }
 
 function openPopup(side){
-  activeSide = side;
-  popup.style.display = "block";
-  overlay.style.display = "block";
+  activeSide=side;
+  popup.style.display="block";
+  overlay.style.display="block";
   renderDragonList(dragons);
 }
 
 function closePopup(){
-  popup.style.display = "none";
-  overlay.style.display = "none";
-  optionsPopup.style.display = "none";
+  popup.style.display="none";
+  overlay.style.display="none";
+  optionsPopup.style.display="none";
 }
 
 function renderDragonList(list){
-  let box = document.getElementById("dragonList");
-  box.innerHTML = "";
+  let box=document.getElementById("dragonList");
+  box.innerHTML="";
 
   list.forEach(d=>{
-    let div = document.createElement("div");
-    div.className = "dragon-card";
-    div.innerHTML = `<img src="${d.img}"><div>${d.name}</div>`;
-    div.onclick = () => addDragon(d);
+    let div=document.createElement("div");
+    div.className="dragon-card";
+    div.innerHTML=`<img src="${d.img}"><div>${d.name}</div>`;
+
+    div.onclick=()=>{
+      document.querySelectorAll(".dragon-card")
+        .forEach(c=>c.classList.remove("selected"));
+
+      div.classList.add("selected");
+      addDragon(d);
+    };
+
     box.appendChild(div);
   });
 }
 
 function addDragon(d){
-  pendingDragon = d;
-  optionsPopup.style.display = "block";
+  pendingDragon=d;
+  optionsPopup.style.display="block";
 }
 
 function confirmAdd(){
-  let item = {
-    base: pendingDragon,
-    mutation: mut.checked,
-    legColor: legC.checked,
-    legEye: legE.checked
+  let item={
+    base:pendingDragon,
+    mutation:mut.checked,
+    legColor:legC.checked,
+    legEye:legE.checked
   };
 
-  if(activeSide === 1) you.push(item);
-  if(activeSide === 2) them.push(item);
+  if(activeSide===1) you.push(item);
+  if(activeSide===2) them.push(item);
 
   closePopup();
   update();
@@ -334,23 +353,23 @@ function remove(side,i){
 function update(){
   render();
 
-  let y = you.reduce((s,i)=>s+getFinalValue(i),0);
-  let t = them.reduce((s,i)=>s+getFinalValue(i),0);
-  let diff = t - y;
+  let y=you.reduce((s,i)=>s+getFinalValue(i),0);
+  let t=them.reduce((s,i)=>s+getFinalValue(i),0);
+  let diff=t-y;
 
-  let label =
-    diff === 0 ? "FAIR" :
-    Math.abs(diff) < 1000000 ? (diff>0?"SMALL WIN":"SMALL LOSS") :
+  let label=
+    diff===0?"FAIR TRADE":
+    Math.abs(diff)<1000000?(diff>0?"SMALL WIN":"SMALL LOSS"):
     (diff>0?"WIN":"LOSS");
 
-  let w = 50 + (diff / Math.max(y,t||1)) * 50;
-  w = Math.max(0,Math.min(100,w));
+  let w=50+(diff/Math.max(y,t||1))*50;
+  w=Math.max(0,Math.min(100,w));
 
-  wfl.style.width = w + "%";
-  wfl.style.background = diff>0 ? "#22c55e" : diff<0 ? "#ef4444" : "#facc15";
+  wfl.style.width=w+"%";
+  wfl.style.background=diff>0?"#22c55e":diff<0?"#ef4444":"#facc15";
 
-  wflText.innerText = label;
-  result.innerText = `You: ${y.toLocaleString()} | Them: ${t.toLocaleString()}`;
+  wflText.innerText=label;
+  result.innerText=`You: ${y.toLocaleString()} | Them: ${t.toLocaleString()}`;
 }
 
 render();
