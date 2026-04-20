@@ -76,6 +76,18 @@ body {
   object-fit: contain;
 }
 
+.icon-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.icon-row img {
+  width: 22px;
+  height: 22px;
+}
+
 .add {
   background: #38bdf8;
   border: none;
@@ -213,9 +225,7 @@ body {
 
 <script>
 
-/* =======================
-   FIX: DOM REFERENCES
-======================= */
+/* FIXED DOM REFERENCES */
 const popup = document.getElementById("popup");
 const overlay = document.getElementById("overlay");
 const optionsPopup = document.getElementById("optionsPopup");
@@ -228,9 +238,7 @@ const wfl = document.getElementById("wfl");
 const wflText = document.getElementById("wflText");
 const result = document.getElementById("result");
 
-/* =======================
-   YOUR DRAGONS (UNCHANGED)
-======================= */
+/* YOUR DRAGONS (UNCHANGED) */
 const dragons = [
   { name:"Veidreki", value:"35M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/a/aa/Veidreki_Icon.png" },
   { name:"Alatura", value:"17M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/d0/Alatura_Icon.png" },
@@ -249,21 +257,17 @@ const dragons = [
 let you=[], them=[], activeSide=null, pendingDragon=null;
 const MAX=9;
 
-/* =======================
-   VALUE CALC
-======================= */
+/* VALUE */
 function getFinalValue(item){
-  let base = parseFloat(item.base.value) * (item.base.value.includes("M") ? 1e6 : 1e3);
-  let extra = 0;
-  if(item.mutation) extra += 500000;
-  if(item.legColor) extra += 1000000;
-  if(item.legEye) extra += 1000000;
-  return base + extra;
+  let base=parseFloat(item.base.value)*(item.base.value.includes("M")?1e6:1e3);
+  let extra=0;
+  if(item.mutation) extra+=500000;
+  if(item.legColor) extra+=1000000;
+  if(item.legEye) extra+=1000000;
+  return base+extra;
 }
 
-/* =======================
-   RENDER
-======================= */
+/* RENDER */
 function render(){
   draw("youSlots",you,1);
   draw("themSlots",them,2);
@@ -283,6 +287,13 @@ function draw(id,list,side){
       slot.innerHTML=`
         <img src="${item.base.img}">
         <small>${item.base.name}</small>
+
+        <div class="icon-row">
+          ${item.mutation ? `<img src="https://static.wikia.nocookie.net/dragon-adventures/images/5/5b/Mutation_Icon.png">` : ""}
+          ${item.legColor ? `<img src="https://static.wikia.nocookie.net/dragon-adventures/images/1/1c/Legendary_Color_Icon.png">` : ""}
+          ${item.legEye ? `<img src="https://static.wikia.nocookie.net/dragon-adventures/images/7/7a/Legendary_Eye_Icon.png">` : ""}
+        </div>
+
         <button class="remove" onclick="remove(${side},${i})">X</button>
       `;
     } else {
@@ -293,9 +304,7 @@ function draw(id,list,side){
   }
 }
 
-/* =======================
-   POPUPS
-======================= */
+/* POPUPS */
 function openPopup(side){
   activeSide=side;
   popup.style.display="block";
@@ -356,9 +365,7 @@ function remove(side,i){
   update();
 }
 
-/* =======================
-   WFL
-======================= */
+/* WFL */
 function update(){
   render();
 
@@ -367,8 +374,8 @@ function update(){
   let diff=t-y;
 
   let label =
-    diff===0 ? "FAIR TRADE" :
-    Math.abs(diff)<1000000 ? (diff>0?"SMALL WIN":"SMALL LOSS") :
+    diff===0?"FAIR TRADE":
+    Math.abs(diff)<1000000?(diff>0?"SMALL WIN":"SMALL LOSS"):
     (diff>0?"WIN":"LOSS");
 
   let w=50+(diff/Math.max(y,t||1))*50;
