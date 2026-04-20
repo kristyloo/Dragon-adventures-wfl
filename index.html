@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
   <title>Dragon Adventures Trade Calculator</title>
@@ -11,35 +11,29 @@
     text-align: center;
     padding: 20px;
     margin: 0;
-    overflow-x: hidden;
   }
 
-  html, body {
-    height: 100%;
-  }
-
-  /* CENTERED LAYOUT */
   .container {
     display: grid;
-    grid-template-columns: repeat(2, minmax(260px, 320px));
+    grid-template-columns: 1fr 1fr;
     justify-content: center;
     gap: 60px;
 
     max-width: 900px;
     margin: 20px auto 0 auto;
 
-    align-items: start;
+    align items: start;
   }
 
-  /* TRADE BOX */
+  /* FIXED TRADE BOX */
   .trade-box {
     background: rgba(255,255,255,0.04);
-    padding: 20px;
+    padding: 20px 20px 25px 18px;
     border-radius: 15px;
 
     width: 100%;
-    max-width: 320px;
-
+    max-width: 300px
+      
     min-height: 520px;
     box-sizing: border-box;
 
@@ -48,53 +42,58 @@
     align-items: center;
   }
 
-  /* SLOTS GRID */
   .slots {
     display: grid;
-    grid-template-columns: repeat(3, 100px);
-    gap: 14px;
+    grid-template-columns: repeat(3, 110px);
+    gap: 14px; /* 👈 THIS is what makes it feel like DA spacing */
     justify-content: center;
     margin-top: 10px;
+    box-sizing: border-box;
   }
 
-  /* SLOT */
   .slot {
-    width: 100px;
-    height: 140px;
-
-    background: #1e293b;
+    width: 110px;
+    height: 145px;
+ 
+    box-sizing: border-box;
+ 
+    background: #1e293b; 
     border: 2px solid #334155;
     border-radius: 14px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start;  
 
     font-size: 12px;
-    padding: 4px;
-    overflow: hidden;
 
+    padding: 4px; /* 👈 reduced from 6px */
+    overflow: hidden;
+    
     box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25);
   }
 
+  /* DRAGON IMAGE SIZE */
   .slot img {
-    width: 68px;
-    height: 68px;
+    width: 72px;
+    height: 72px;
     border-radius: 8px;
     object-fit: contain;
   }
 
+  /* ICON ROW */
   .icon-row {
     display: flex;
     justify-content: center;
     gap: 4px;
-    margin-top: 4px;
+    margin-top: 5px;
   }
 
   .icon-row img {
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
   }
 
   .add {
@@ -114,7 +113,6 @@
     cursor: pointer;
   }
 
-  /* POPUPS */
   .popup {
     display: none;
     position: fixed;
@@ -124,12 +122,13 @@
     background: #0f172a;
     border: 2px solid #334155;
     border-radius: 15px;
-
-    width: 90%;
+    
+    width: 90%px;
     max-width: 420px;
-    max-height: 80vh;
 
+    max-height: 80vh;
     overflow-y: auto;
+    
     padding: 18px;
     z-index: 1000;
   }
@@ -139,10 +138,10 @@
     position: fixed;
     top: 0;
     left: 0;
-
+    
     width: 100vw;
     height: 100vh;
-
+    
     background: rgba(0,0,0,0.6);
     z-index: 999;
   }
@@ -171,12 +170,11 @@
     border-radius: 8px;
   }
 
-  /* WFL BAR */
   .bar {
     width: 80%;
     height: 18px;
     background: #334155;
-    margin: 25px auto;
+    margin: 20px auto;
     border-radius: 10px;
     overflow: hidden;
   }
@@ -206,7 +204,8 @@
     margin: 8px 0;
     font-size: 14px;
   }
-  </style>
+</style>
+  
 </head>
 
 <body>
@@ -214,6 +213,7 @@
 <h1>Dragon Adventures Trade W/F/L</h1>
 
 <div class="container">
+
   <div class="trade-box">
     <h2>You</h2>
     <div id="youSlots" class="slots"></div>
@@ -223,6 +223,7 @@
     <h2>Them</h2>
     <div id="themSlots" class="slots"></div>
   </div>
+
 </div>
 
 <div class="bar">
@@ -240,32 +241,25 @@
 </div>
 
 <div class="popup" id="optionsPopup">
+
   <h3>Dragon Options</h3>
 
-  <label>Mutations:
-    <select id="mutCount">
-      <option value="0">0</option>
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-    </select>
-  </label>
-
+  <label><input type="checkbox" id="mut"> Mutation</label>
   <label><input type="checkbox" id="legC"> Legendary Color</label>
   <label><input type="checkbox" id="legE"> Legendary Eye</label>
 
   <br><br>
 
-  <button onclick="confirmAdd()" style="
+  <button style="
     background:#38bdf8;
     border:none;
     padding:8px 12px;
     border-radius:8px;
-    cursor:pointer;">
+    cursor:pointer;
+  " onclick="confirmAdd()">
     Add Dragon
   </button>
+
 </div>
 
 <script>
@@ -327,17 +321,18 @@ let you=[], them=[], activeSide=null, pendingDragon=null;
 const MAX=9;
 
 function parse(v){
+  v=v.toUpperCase();
   if(v.includes("M")) return parseFloat(v)*1e6;
   if(v.includes("K")) return parseFloat(v)*1e3;
   return parseFloat(v);
 }
 
 function getFinalValue(item){
-  let base=parse(item.base.value);
-  let extra = item.mutCount * bonuses.mutation;
+  let base=parse(item.base.value), extra=0;
 
-  if(item.legColor) extra+=bonuses.legColor;
-  if(item.legEye) extra+=bonuses.legEye;
+  if(item.mutation) extra+=bonuses.mutation[item.base.type]||0;
+  if(item.legColor) extra+=bonuses.legColor[item.base.type]||0;
+  if(item.legEye) extra+=bonuses.legEye[item.base.type]||0;
 
   return base+extra;
 }
@@ -361,7 +356,13 @@ function draw(id,list,side){
       slot.innerHTML=`
         <img src="${item.base.img}">
         <small>${item.base.name}</small>
-        <div>Mut: ${item.mutCount}</div>
+
+        <div class="icon-row">
+          ${item.mutation ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/e/ec/Mutation_Potion.png">' : ""}
+          ${item.legColor ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/4/4f/Legendary_Color_Potion.png">' : ""}
+          ${item.legEye ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/f/f9/Legendary_Pupil_Potion.png">' : ""}
+        </div>
+
         <button class="remove" onclick="remove(${side},${i})">➖</button>
       `;
     } else {
@@ -386,13 +387,15 @@ function closePopup(){
 }
 
 function renderDragonList(list){
-  dragonList.innerHTML="";
+  let box=document.getElementById("dragonList");
+  box.innerHTML="";
+
   list.forEach(d=>{
     let div=document.createElement("div");
     div.className="dragon-card";
     div.innerHTML=`<img src="${d.img}"><div>${d.name}</div>`;
-    div.onclick=()=>{pendingDragon=d; optionsPopup.style.display="block";}
-    dragonList.appendChild(div);
+    div.onclick=()=>addDragon(d);
+    box.appendChild(div);
   });
 }
 
@@ -401,12 +404,17 @@ function filterDragons(){
   renderDragonList(dragons.filter(d=>d.name.toLowerCase().includes(val)));
 }
 
+function addDragon(d){
+  pendingDragon=d;
+  optionsPopup.style.display="block";
+}
+
 function confirmAdd(){
   let item={
     base:pendingDragon,
-    mutCount: parseInt(mutCount.value),
-    legColor: legC.checked,
-    legEye: legE.checked
+    mutation:mut.checked,
+    legColor:legC.checked,
+    legEye:legE.checked
   };
 
   if(activeSide===1 && you.length<MAX) you.push(item);
@@ -421,6 +429,7 @@ function remove(side,i){
   update();
 }
 
+/* ✅ NEW WFL SYSTEM */
 function update(){
   render();
 
@@ -429,16 +438,24 @@ function update(){
 
   let diff=t-y;
 
-  let label = diff===0 ? "FAIR TRADE"
-    : Math.abs(diff)<1_000_000
-    ? (diff>0?"SMALL WIN":"SMALL LOSS")
-    : (diff>0?"WIN":"LOSS");
+  let label="";
 
+  if(diff===0){
+    label="FAIR TRADE";
+  }
+  else if(Math.abs(diff)<1_000_000){
+    label=diff>0?"SMALL WIN":"SMALL LOSS";
+  }
+  else{
+    label=diff>0?"WIN":"LOSS";
+  }
+
+  let bar=wfl;
   let w=50+(diff/Math.max(y,t||1))*50;
   w=Math.max(0,Math.min(100,w));
 
-  wfl.style.width=w+"%";
-  wfl.style.background=diff>0?"#22c55e":diff<0?"#ef4444":"#facc15";
+  bar.style.width=w+"%";
+  bar.style.background=diff>0?"#22c55e":diff<0?"#ef4444":"#facc15";
 
   wflText.innerText=label;
   result.innerText=`You: ${y.toLocaleString()} | Them: ${t.toLocaleString()}`;
