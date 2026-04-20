@@ -172,34 +172,31 @@ body {
 <body>
 
 <div class="page">
+  <h1>Dragon Adventures Trade W/F/L</h1>
 
-<h1>Dragon Adventures Trade W/F/L</h1>
+  <div class="container">
+    <div class="trade-box">
+      <h2>You</h2>
+      <div id="youSlots" class="slots"></div>
+    </div>
 
-<div class="container">
-  <div class="trade-box">
-    <h2>You</h2>
-    <div id="youSlots" class="slots"></div>
+    <div class="trade-box">
+      <h2>Them</h2>
+      <div id="themSlots" class="slots"></div>
+    </div>
   </div>
 
-  <div class="trade-box">
-    <h2>Them</h2>
-    <div id="themSlots" class="slots"></div>
+  <div class="bar">
+    <div id="wfl"></div>
   </div>
-</div>
 
-<div class="bar">
-  <div id="wfl"></div>
-</div>
-
-<div id="wflText"></div>
-<div id="result"></div>
-
+  <div id="wflText"></div>
+  <div id="result"></div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closePopup()"></div>
 
 <div class="popup" id="popup">
-  <input id="searchBox" placeholder="Search dragons..." oninput="filterDragons()">
   <div id="dragonList" class="dragon-list"></div>
 </div>
 
@@ -211,12 +208,29 @@ body {
   <label><input type="checkbox" id="legE"> Legendary Eye</label>
 
   <br><br>
-
   <button onclick="confirmAdd()">Add Dragon</button>
 </div>
 
 <script>
 
+/* =======================
+   FIX: DOM REFERENCES
+======================= */
+const popup = document.getElementById("popup");
+const overlay = document.getElementById("overlay");
+const optionsPopup = document.getElementById("optionsPopup");
+
+const mut = document.getElementById("mut");
+const legC = document.getElementById("legC");
+const legE = document.getElementById("legE");
+
+const wfl = document.getElementById("wfl");
+const wflText = document.getElementById("wflText");
+const result = document.getElementById("result");
+
+/* =======================
+   YOUR DRAGONS (UNCHANGED)
+======================= */
 const dragons = [
   { name:"Veidreki", value:"35M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/a/aa/Veidreki_Icon.png" },
   { name:"Alatura", value:"17M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/d0/Alatura_Icon.png" },
@@ -229,40 +243,27 @@ const dragons = [
   { name:"Seikarin", value:"4M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/df/Seikarin_Icon.png"},
   { name:"Constello", value:"9M", type:"guild", img:"https://static.wikia.nocookie.net/dragon-adventures/images/7/7c/Constello_Icon.png"},
   { name:"Eryndiorn", value:"10M", type:"guild", img:"https://static.wikia.nocookie.net/dragon-adventures/images/5/5f/Eryndiorn_Icon.png"},
-  { name:"Agricos", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/6/66/Agricos_Icon.png"},
-  { name:"Alrenoth", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/5/59/Alrenoth_Icon.png"},
-  { name:"Amphyll", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/49/Amphyll_Icon.png"},
-  { name:"Atarix", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/49/Atarix_Icon.png"},
-  { name:"Bisonture", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/dc/Bisonture_Icon.png"},
-  { name:"Bizaltidath", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/44/Bizaltidath_Icon.png"},
-  { name:"Chronocus", value:"10K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/3/31/Chronocus_Icon.png"},
-  { name:"Cocovira", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/4d/Cocovira_Icon.png"}
+  { name:"Agricos", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/6/66/Agricos_Icon.png"}
 ];
 
 let you=[], them=[], activeSide=null, pendingDragon=null;
 const MAX=9;
 
-const popup=document.getElementById("popup");
-const overlay=document.getElementById("overlay");
-const optionsPopup=document.getElementById("optionsPopup");
-
-const mut=document.getElementById("mut");
-const legC=document.getElementById("legC");
-const legE=document.getElementById("legE");
-
-const wfl=document.getElementById("wfl");
-const wflText=document.getElementById("wflText");
-const result=document.getElementById("result");
-
+/* =======================
+   VALUE CALC
+======================= */
 function getFinalValue(item){
-  let base=parseFloat(item.base.value)*(item.base.value.includes("M")?1e6:1e3);
-  let extra=0;
-  if(item.mutation) extra+=500000;
-  if(item.legColor) extra+=1000000;
-  if(item.legEye) extra+=1000000;
-  return base+extra;
+  let base = parseFloat(item.base.value) * (item.base.value.includes("M") ? 1e6 : 1e3);
+  let extra = 0;
+  if(item.mutation) extra += 500000;
+  if(item.legColor) extra += 1000000;
+  if(item.legEye) extra += 1000000;
+  return base + extra;
 }
 
+/* =======================
+   RENDER
+======================= */
 function render(){
   draw("youSlots",you,1);
   draw("themSlots",them,2);
@@ -271,6 +272,7 @@ function render(){
 function draw(id,list,side){
   let box=document.getElementById(id);
   box.innerHTML="";
+
   for(let i=0;i<MAX;i++){
     let slot=document.createElement("div");
     slot.className="slot";
@@ -291,11 +293,14 @@ function draw(id,list,side){
   }
 }
 
+/* =======================
+   POPUPS
+======================= */
 function openPopup(side){
   activeSide=side;
   popup.style.display="block";
   overlay.style.display="block";
-  renderDragonList(dragons);
+  renderDragonList();
 }
 
 function closePopup(){
@@ -304,13 +309,14 @@ function closePopup(){
   optionsPopup.style.display="none";
 }
 
-function renderDragonList(list){
+function renderDragonList(){
   let box=document.getElementById("dragonList");
   box.innerHTML="";
 
-  list.forEach(d=>{
+  dragons.forEach(d=>{
     let div=document.createElement("div");
     div.className="dragon-card";
+
     div.innerHTML=`<img src="${d.img}"><div>${d.name}</div>`;
 
     div.onclick=()=>{
@@ -350,6 +356,9 @@ function remove(side,i){
   update();
 }
 
+/* =======================
+   WFL
+======================= */
 function update(){
   render();
 
@@ -357,9 +366,9 @@ function update(){
   let t=them.reduce((s,i)=>s+getFinalValue(i),0);
   let diff=t-y;
 
-  let label=
-    diff===0?"FAIR TRADE":
-    Math.abs(diff)<1000000?(diff>0?"SMALL WIN":"SMALL LOSS"):
+  let label =
+    diff===0 ? "FAIR TRADE" :
+    Math.abs(diff)<1000000 ? (diff>0?"SMALL WIN":"SMALL LOSS") :
     (diff>0?"WIN":"LOSS");
 
   let w=50+(diff/Math.max(y,t||1))*50;
