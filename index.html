@@ -14,15 +14,13 @@
   }
 
   .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
     justify-content: center;
     gap: 60px;
-
+    align-items: flex-start;
+    
     max-width: 900px;
-    margin: 20px auto 0 auto;
-
-    align items: start;
+    margin: 20px auto;
   }
 
   .trade-box {
@@ -38,6 +36,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    flex: 1;
   }
 
   .slots {
@@ -237,7 +237,7 @@
 
   <h3>Dragon Options</h3>
 
-  <!-- 🔥 FIXED MUTATION -->
+  <!--  FIXED MUTATION -->
   <label>
     Mutations:
     <select id="mut">
@@ -325,8 +325,8 @@ function draw(id,list,side){
         <small>${item.base.name}</small>
 
         <div class="icon-row">
-          ${item.mutations ? '<span>🧪'+item.mutations+'</span>' : ""}
-          ${item.legColor ?  '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/4/4f/Legendary_Color_Potion.png">' : ""}
+          ${item.mutations ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/e/ec/Mutation_Potion.png">' : ""}
+          ${item.legColor ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/4/4f/Legendary_Color_Potion.png">' : ""}
           ${item.legEye ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/f/f9/Legendary_Pupil_Potion.png">' : ""}
         </div>
 
