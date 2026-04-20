@@ -320,6 +320,9 @@ const bonuses = {
 let you=[], them=[], activeSide=null, pendingDragon=null;
 const MAX=9;
 
+/* STORE SELECTED SLOT FOR BLUE GLOW */
+let selectedSlot = null;
+
 function parse(v){
   v=v.toUpperCase();
   if(v.includes("M")) return parseFloat(v)*1e6;
@@ -327,21 +330,27 @@ function parse(v){
   return parseFloat(v);
 }
 
+/* FIXED MUTATION STACKING */
 function getFinalValue(item){
-  let base=parse(item.base.value), extra=0;
+  let base=parse(item.base.value);
+  let extra=0;
 
-  if(item.mutation) extra+=bonuses.mutation[item.base.type]||0;
+  let mutCount = item.mutCount || 0;
+  extra += (bonuses.mutation[item.base.type] || 0) * mutCount;
+
   if(item.legColor) extra+=bonuses.legColor[item.base.type]||0;
   if(item.legEye) extra+=bonuses.legEye[item.base.type]||0;
 
   return base+extra;
 }
 
+/* RENDER */
 function render(){
   draw("youSlots",you,1);
   draw("themSlots",them,2);
 }
 
+/* SLOT DRAW */
 function draw(id,list,side){
   let box=document.getElementById(id);
   box.innerHTML="";
@@ -352,13 +361,19 @@ function draw(id,list,side){
 
     let item=list[i];
 
+    /* 🔵 BLUE HIGHLIGHT SELECT */
+    if(selectedSlot && selectedSlot.side===side && selectedSlot.index===i){
+      slot.style.border="2px solid #38bdf8";
+      slot.style.boxShadow="0 0 12px #38bdf8";
+    }
+
     if(item){
       slot.innerHTML=`
         <img src="${item.base.img}">
         <small>${item.base.name}</small>
 
         <div class="icon-row">
-          ${item.mutation ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/e/ec/Mutation_Potion.png">' : ""}
+          ${item.mutCount ? `<span>${item.mutCount} Mut</span>` : ""}
           ${item.legColor ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/4/4f/Legendary_Color_Potion.png">' : ""}
           ${item.legEye ? '<img src="https://static.wikia.nocookie.net/dragon-adventures/images/f/f9/Legendary_Pupil_Potion.png">' : ""}
         </div>
@@ -366,26 +381,32 @@ function draw(id,list,side){
         <button class="remove" onclick="remove(${side},${i})">➖</button>
       `;
     } else {
-      slot.innerHTML=`<button class="add" onclick="openPopup(${side})">➕</button>`;
+      slot.innerHTML=`<button class="add" onclick="openPopup(${side},${i})">➕</button>`;
     }
 
     box.appendChild(slot);
   }
 }
 
-function openPopup(side){
+/* OPEN POPUP */
+function openPopup(side,index){
   activeSide=side;
+  selectedSlot={side,index};
+
   popup.style.display="block";
   overlay.style.display="block";
+
   renderDragonList(dragons);
 }
 
+/* CLOSE */
 function closePopup(){
   popup.style.display="none";
   overlay.style.display="none";
   optionsPopup.style.display="none";
 }
 
+/* DRAGONS */
 function renderDragonList(list){
   let box=document.getElementById("dragonList");
   box.innerHTML="";
@@ -399,20 +420,21 @@ function renderDragonList(list){
   });
 }
 
-function filterDragons(){
-  let val=searchBox.value.toLowerCase();
-  renderDragonList(dragons.filter(d=>d.name.toLowerCase().includes(val)));
-}
-
+/* SELECT DRAGON */
 function addDragon(d){
   pendingDragon=d;
   optionsPopup.style.display="block";
 }
 
+/* CONFIRM ADD */
 function confirmAdd(){
+
   let item={
     base:pendingDragon,
-    mutation:mut.checked,
+
+    /* MUTATION (0–5) */
+    mutCount: parseInt(mut.value || 0),
+
     legColor:legC.checked,
     legEye:legE.checked
   };
@@ -424,12 +446,13 @@ function confirmAdd(){
   update();
 }
 
+/* REMOVE */
 function remove(side,i){
   side===1?you.splice(i,1):them.splice(i,1);
   update();
 }
 
-/* ✅ NEW WFL SYSTEM */
+/* WFL */
 function update(){
   render();
 
@@ -438,24 +461,19 @@ function update(){
 
   let diff=t-y;
 
-  let label="";
+  let label=
+    diff===0?"FAIR TRADE":
+    Math.abs(diff)<1_000_000?
+    (diff>0?"SMALL WIN":"SMALL LOSS"):
+    (diff>0?"WIN":"LOSS");
 
-  if(diff===0){
-    label="FAIR TRADE";
-  }
-  else if(Math.abs(diff)<1_000_000){
-    label=diff>0?"SMALL WIN":"SMALL LOSS";
-  }
-  else{
-    label=diff>0?"WIN":"LOSS";
-  }
-
-  let bar=wfl;
   let w=50+(diff/Math.max(y,t||1))*50;
   w=Math.max(0,Math.min(100,w));
 
-  bar.style.width=w+"%";
-  bar.style.background=diff>0?"#22c55e":diff<0?"#ef4444":"#facc15";
+  wfl.style.width=w+"%";
+  wfl.style.background=
+    diff>0?"#22c55e":
+    diff<0?"#ef4444":"#facc15";
 
   wflText.innerText=label;
   result.innerText=`You: ${y.toLocaleString()} | Them: ${t.toLocaleString()}`;
