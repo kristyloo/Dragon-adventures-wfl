@@ -9,128 +9,163 @@ body {
   background: #0f172a;
   color: white;
   text-align: center;
-  padding: 20px;
   margin: 0;
+  padding: 20px;
 }
 
+/* FIXED CENTERING */
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  justify-content: center;
   gap: 60px;
   max-width: 900px;
   margin: 20px auto;
   align-items: start;
+  justify-items: center;
 }
 
+/* TRADE BOX */
 .trade-box {
   background: rgba(255,255,255,0.04);
   padding: 20px;
   border-radius: 15px;
-  max-width: 300px;
+
+  width: 320px;
   min-height: 520px;
+  box-sizing: border-box;
 }
 
+/* SLOTS */
 .slots {
   display: grid;
   grid-template-columns: repeat(3, 110px);
   gap: 14px;
 }
 
+/* SLOT STYLE (UNCHANGED FEEL) */
 .slot {
   width: 110px;
   height: 145px;
   background: #1e293b;
   border: 2px solid #334155;
   border-radius: 14px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 4px;
 }
 
-.slot img { width: 72px; height: 72px; }
-
-.slot.selected {
-  border-color: #38bdf8;
-  box-shadow: 0 0 12px #38bdf8;
+/* IMAGES */
+.slot img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
 }
 
+/* ICON ROW */
 .icon-row {
-  display:flex;
-  gap:4px;
+  display: flex;
+  gap: 4px;
 }
 
-.icon-row img { width:26px; height:26px; }
+.icon-row img {
+  width: 26px;
+  height: 26px;
+}
 
+/* BUTTONS */
 .add {
-  background:#38bdf8;
-  border:none;
-  padding:5px;
-  border-radius:5px;
-  cursor:pointer;
+  background: #38bdf8;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .remove {
-  background:#ef4444;
-  border:none;
-  color:white;
-  padding:3px;
-  border-radius:5px;
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
 }
 
+/* POPUPS */
 .popup {
-  display:none;
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:#0f172a;
-  border:2px solid #334155;
-  border-radius:15px;
-  width:90%;
-  max-width:500px;
-  z-index:1000;
-  padding:20px;
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #0f172a;
+  border: 2px solid #334155;
+  border-radius: 15px;
+
+  width: 95%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 20px;
+  z-index: 1000;
 }
 
 .overlay {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  z-index:999;
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
 }
 
+/* DRAGONS FIXED SIZE */
 .dragon-card {
-  background:#334155;
-  padding:10px;
-  border-radius:10px;
-  width:100px;
-  cursor:pointer;
+  background: #334155;
+  padding: 8px;
+  border-radius: 10px;
+  width: 80px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
 }
 
+.dragon-card img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+/* SELECT GLOW */
 .dragon-card.selected {
-  border:2px solid #38bdf8;
-  box-shadow:0 0 10px #38bdf8;
+  border: 2px solid #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
 }
 
+/* WFL BAR */
 .bar {
-  width:80%;
-  height:18px;
-  background:#334155;
-  margin:20px auto;
-  border-radius:10px;
-  overflow:hidden;
+  width: 80%;
+  height: 18px;
+  background: #334155;
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 #wfl {
-  height:100%;
-  width:50%;
-  background:#22c55e;
-  transition:0.3s;
+  height: 100%;
+  width: 50%;
+  background: #22c55e;
+  transition: 0.3s;
+}
+
+/* OPTION ROW */
+.option-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
 }
 </style>
-
 </head>
 
 <body>
@@ -139,217 +174,219 @@ body {
 
 <div class="container">
 
-<div class="trade-box">
-<h2>You</h2>
-<div id="youSlots" class="slots"></div>
-</div>
+  <div class="trade-box">
+    <h2>You</h2>
+    <div id="youSlots" class="slots"></div>
+  </div>
 
-<div class="trade-box">
-<h2>Them</h2>
-<div id="themSlots" class="slots"></div>
-</div>
+  <div class="trade-box">
+    <h2>Them</h2>
+    <div id="themSlots" class="slots"></div>
+  </div>
 
 </div>
 
 <div class="bar">
-<div id="wfl"></div>
+  <div id="wfl"></div>
 </div>
 
 <div class="overlay" id="overlay"></div>
 
+<!-- DRAGON POPUP -->
 <div class="popup" id="popup">
-<input id="searchBox" placeholder="Search dragons..." oninput="filterDragons()">
-<div id="dragonList"></div>
+  <input id="searchBox" placeholder="Search dragons..." oninput="filterDragons()">
+  <div id="dragonList"></div>
 </div>
 
+<!-- OPTIONS POPUP -->
 <div class="popup" id="optionsPopup">
 
-<h3>Options</h3>
+  <h3>Options</h3>
 
-<label>Mutations
-<select id="mutCount">
-<option value="0">0</option>
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-</select>
-</label>
+  <div class="option-row">
+    <select id="mutCount">
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <span>Mutations</span>
+  </div>
 
-<br><br>
+  <div class="option-row">
+    <span>Legendary Color</span>
+    <input type="checkbox" id="legC">
+  </div>
 
-<label><input type="checkbox" id="legC"> Legendary Color</label><br>
-<label><input type="checkbox" id="legE"> Legendary Eye</label><br><br>
+  <div class="option-row">
+    <span>Legendary Eye</span>
+    <input type="checkbox" id="legE">
+  </div>
 
-<button onclick="confirmAdd()">Add</button>
+  <button onclick="confirmAdd()">Add Dragon</button>
 
 </div>
 
 <script>
 
-/* SAFE DOM INIT */
 const popup = document.getElementById("popup");
 const overlay = document.getElementById("overlay");
 const optionsPopup = document.getElementById("optionsPopup");
 
-let you=[], them=[], activeSide=null, selectedDragon=null;
-const MAX=9;
+let you = [], them = [];
+let activeSide = null;
+let selectedDragon = null;
+const MAX = 9;
 
-/* DRAGONS (keep yours if needed) */
-const dragons=[
-{name:"Venid",value:"2K",type:"world",img:"https://static.wikia.nocookie.net/dragon-adventures/images/8/81/Venid_Icon.png"},
-{name:"Alatura",value:"17M",type:"season",img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/d0/Alatura_Icon.png"}
+/* DRAGONS */
+const dragons = [
+  {name:"Venid",value:"2K",type:"world",img:"https://static.wikia.nocookie.net/dragon-adventures/images/8/81/Venid_Icon.png"},
+  {name:"Alatura",value:"17M",type:"season",img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/d0/Alatura_Icon.png"}
 ];
 
 /* BONUSES */
-const bonuses={
-mutation:{
-world:50000,
-season:100000,
-guild:100000,
-event:50000
-},
-legColor:{
-world:500000,
-season:1000000,
-guild:1000000,
-event:500000
-},
-legEye:{
-world:500000,
-season:1000000,
-guild:1000000,
-event:1000000
-}
+const bonuses = {
+  mutation: { world:50000, season:100000, guild:100000, event:50000 },
+  legColor: { world:500000, season:1000000, guild:1000000, event:500000 },
+  legEye:   { world:500000, season:1000000, guild:1000000, event:1000000 }
 };
 
 function parse(v){
-if(v.includes("M")) return parseFloat(v)*1e6;
-if(v.includes("K")) return parseFloat(v)*1e3;
-return parseFloat(v);
+  if(v.includes("M")) return parseFloat(v)*1e6;
+  if(v.includes("K")) return parseFloat(v)*1e3;
+  return parseFloat(v);
 }
 
-function getFinalValue(i){
-let base=parse(i.base.value), extra=0;
+function getValue(item){
+  let base = parse(item.base.value);
+  let extra = 0;
 
-if(i.mutation)
-extra += bonuses.mutation[i.base.type]*i.mutation;
+  if(item.mutation)
+    extra += bonuses.mutation[item.base.type] * item.mutation;
 
-if(i.legColor) extra += bonuses.legColor[i.base.type];
-if(i.legEye) extra += bonuses.legEye[i.base.type];
+  if(item.legColor)
+    extra += bonuses.legColor[item.base.type];
 
-return base+extra;
+  if(item.legEye)
+    extra += bonuses.legEye[item.base.type];
+
+  return base + extra;
 }
 
-/* RENDER */
+/* DRAW */
 function draw(id,list){
-let box=document.getElementById(id);
-box.innerHTML="";
+  let box = document.getElementById(id);
+  box.innerHTML = "";
 
-for(let i=0;i<MAX;i++){
-let slot=document.createElement("div");
-slot.className="slot";
+  for(let i=0;i<MAX;i++){
+    let slot = document.createElement("div");
+    slot.className = "slot";
 
-let item=list[i];
+    let item = list[i];
 
-if(item){
-slot.innerHTML=`
-<img src="${item.base.img}">
-<small>${item.base.name}</small>
+    if(item){
+      slot.innerHTML = `
+        <img src="${item.base.img}">
+        <small>${item.base.name}</small>
 
-<div class="icon-row">
-${item.mutation?`<img src="https://static.wikia.nocookie.net/dragon-adventures/images/e/ec/Mutation_Potion.png">`:``}
-${item.legColor?`<img src="https://static.wikia.nocookie.net/dragon-adventures/images/4/4f/Legendary_Color_Potion.png">`:``}
-${item.legEye?`<img src="https://static.wikia.nocookie.net/dragon-adventures/images/f/f9/Legendary_Pupil_Potion.png">`:``}
-</div>
-`;
-} else {
-slot.innerHTML=`<button class="add" onclick="openPopup()">+</button>`;
+        <div class="icon-row">
+          ${item.mutation ? `<img src="https://static.wikia.nocookie.net/dragon-adventures/images/e/ec/Mutation_Potion.png">` : ""}
+          ${item.legColor ? `<img src="https://static.wikia.nocookie.net/dragon-adventures/images/4/4f/Legendary_Color_Potion.png">` : ""}
+          ${item.legEye ? `<img src="https://static.wikia.nocookie.net/dragon-adventures/images/f/f9/Legendary_Pupil_Potion.png">` : ""}
+        </div>
+      `;
+    } else {
+      slot.innerHTML = `<button class="add" onclick="openPopup()">+</button>`;
+    }
+
+    box.appendChild(slot);
+  }
 }
 
-box.appendChild(slot);
-}
-}
-
-/* POPUP FLOW */
+/* OPEN */
 function openPopup(side){
-activeSide=side;
-popup.style.display="block";
-overlay.style.display="block";
-renderDragons(dragons);
+  activeSide = side;
+  popup.style.display = "block";
+  overlay.style.display = "block";
+  renderDragons(dragons);
 }
 
 function closeAll(){
-popup.style.display="none";
-optionsPopup.style.display="none";
-overlay.style.display="none";
-selectedDragon=null;
+  popup.style.display = "none";
+  optionsPopup.style.display = "none";
+  overlay.style.display = "none";
+  selectedDragon = null;
 }
 
 /* DRAGONS */
 function renderDragons(list){
-let box=document.getElementById("dragonList");
-box.innerHTML="";
+  let box = document.getElementById("dragonList");
+  box.innerHTML = "";
 
-list.forEach(d=>{
-let div=document.createElement("div");
-div.className="dragon-card";
+  list.forEach(d=>{
+    let div = document.createElement("div");
+    div.className = "dragon-card";
 
-if(selectedDragon===d) div.classList.add("selected");
+    if(selectedDragon === d) div.classList.add("selected");
 
-div.innerHTML=`<img src="${d.img}"><div>${d.name}</div>`;
+    div.innerHTML = `<img src="${d.img}"><div>${d.name}</div>`;
 
-div.onclick=()=>{
-selectedDragon=d;
-renderDragons(list);
-optionsPopup.style.display="block";
-};
+    div.onclick = () => {
+      selectedDragon = d;
+      renderDragons(list);
+      optionsPopup.style.display = "block";
+    };
 
-box.appendChild(div);
-});
+    box.appendChild(div);
+  });
 }
 
 function filterDragons(){
-let v=searchBox.value.toLowerCase();
-renderDragons(dragons.filter(d=>d.name.toLowerCase().includes(v)));
+  let v = searchBox.value.toLowerCase();
+  renderDragons(dragons.filter(d => d.name.toLowerCase().includes(v)));
 }
 
 /* ADD */
 function confirmAdd(){
 
-if(!selectedDragon) return;
+  if(!selectedDragon) return;
 
-let item={
-base:selectedDragon,
-mutation:parseInt(mutCount.value),
-legColor:legC.checked,
-legEye:legE.checked
-};
+  let item = {
+    base: selectedDragon,
+    mutation: parseInt(mutCount.value),
+    legColor: legC.checked,
+    legEye: legE.checked
+  };
 
-if(activeSide===1 && you.length<MAX) you.push(item);
-if(activeSide===2 && them.length<MAX) them.push(item);
+  if(activeSide===1) you.push(item);
+  if(activeSide===2) them.push(item);
 
-closeAll();
-update();
+  closeAll();
+  update();
 }
 
-/* UPDATE WFL */
+/* WFL */
 function update(){
 
-draw("youSlots",you);
-draw("themSlots",them);
+  draw("youSlots",you);
+  draw("themSlots",them);
 
-let y=you.reduce((a,b)=>a+getFinalValue(b),0);
-let t=them.reduce((a,b)=>a+getFinalValue(a),0);
+  let y = you.reduce((a,b)=>a + getValue(b),0);
+  let t = them.reduce((a,b)=>a + getValue(b),0);
 
-let diff=t-y;
+  let diff = t - y;
 
-let bar=document.getElementById("wfl");
-let w=50+(diff/Math.max(y,t||1))*50;
+  let bar = document.getElementById("wfl");
 
-bar.style.width=Math.max(0,Math.min(100,w))+"%";
-bar.style.background=diff>0?"#22c55e":diff<0?"#ef4444":"#facc15";
+  let w = 50 + (diff / (y + t || 1)) * 100;
+  w = Math.max(0, Math.min(100, w));
+
+  bar.style.width = w + "%";
+  bar.style.background =
+    diff > 0 ? "#22c55e" :
+    diff < 0 ? "#ef4444" : "#facc15";
 }
 
 update();
