@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dragon Adventures Trade W/F/L</title>
+  <title>Dragon Adventures Trade Calculator</title>
 
   <style>
   body {
@@ -18,29 +18,37 @@
     height: 100%;
   }
 
+  /* CENTERED LAYOUT */
   .container {
     display: grid;
     grid-template-columns: repeat(2, minmax(260px, 320px));
     justify-content: center;
     gap: 60px;
+
     max-width: 900px;
     margin: 20px auto 0 auto;
+
     align-items: start;
   }
 
+  /* TRADE BOX */
   .trade-box {
     background: rgba(255,255,255,0.04);
     padding: 20px;
     border-radius: 15px;
+
     width: 100%;
     max-width: 320px;
+
     min-height: 520px;
     box-sizing: border-box;
+
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
+  /* SLOTS GRID */
   .slots {
     display: grid;
     grid-template-columns: repeat(3, 100px);
@@ -49,19 +57,24 @@
     margin-top: 10px;
   }
 
+  /* SLOT */
   .slot {
     width: 100px;
     height: 140px;
+
     background: #1e293b;
     border: 2px solid #334155;
     border-radius: 14px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+
     font-size: 12px;
     padding: 4px;
     overflow: hidden;
+
     box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25);
   }
 
@@ -101,6 +114,7 @@
     cursor: pointer;
   }
 
+  /* POPUPS */
   .popup {
     display: none;
     position: fixed;
@@ -110,9 +124,11 @@
     background: #0f172a;
     border: 2px solid #334155;
     border-radius: 15px;
+
     width: 90%;
     max-width: 420px;
     max-height: 80vh;
+
     overflow-y: auto;
     padding: 18px;
     z-index: 1000;
@@ -123,8 +139,10 @@
     position: fixed;
     top: 0;
     left: 0;
+
     width: 100vw;
     height: 100vh;
+
     background: rgba(0,0,0,0.6);
     z-index: 999;
   }
@@ -153,6 +171,7 @@
     border-radius: 8px;
   }
 
+  /* WFL BAR */
   .bar {
     width: 80%;
     height: 18px;
@@ -239,7 +258,14 @@
 
   <br><br>
 
-  <button onclick="confirmAdd()">Add Dragon</button>
+  <button onclick="confirmAdd()" style="
+    background:#38bdf8;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;">
+    Add Dragon
+  </button>
 </div>
 
 <script>
@@ -247,15 +273,41 @@
 const dragons = [
   { name:"Veidreki", value:"35M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/a/aa/Veidreki_Icon.png" },
   { name:"Alatura", value:"17M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/d0/Alatura_Icon.png" },
-  { name:"Venid", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/8/81/Venid_Icon.png" }
+  { name:"Moixura", value:"9M", type:"guild", img:"https://static.wikia.nocookie.net/dragon-adventures/images/2/27/Moixaura_Icon.png" },
+  { name:"Venid", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/8/81/Venid_Icon.png" },
+  { name:"Voltstorm", value:"3M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/7/76/Voltstorm_Icon.png" },
+  { name:"Vulpiruth", value:"50K", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/b/b1/Vulpiruth_Icon.png" },
+  { name:"Djaevelhest", value:"150K", type:"event", img:"https://static.wikia.nocookie.net/dragon-adventures/images/b/b0/Djaevelhest_Icon.png" },
+  { name:"Impiavolo", value:"800K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/3/39/Impiavolo_Icon.png" },
+  { name:"Seikarin", value: "4M", type:"season", img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/df/Seikarin_Icon.png"},
+  { name:"Constello", value:"9M", type:"guild", img:"https://static.wikia.nocookie.net/dragon-adventures/images/7/7c/Constello_Icon.png"},
+  { name:"Eryndiorn", value:"10M", type:"guild", img:"https://static.wikia.nocookie.net/dragon-adventures/images/5/5f/Eryndiorn_Icon.png"},
+  { name:"Agricos", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/6/66/Agricos_Icon.png"},
+  { name:"Alrenoth", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/5/59/Alrenoth_Icon.png"},
+  { name:"Amphyll", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/49/Amphyll_Icon.png"},
+  { name:"Atarix", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/49/Atarix_Icon.png"},
+  { name:"Bisonture", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/d/dc/Bisonture_Icon.png"}, 
+  { name:"Bizaltidath", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/44/Bizaltidath_Icon.png"},
+  { name:"Chronocus", value:"10K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/3/31/Chronocus_Icon.png"},
+  { name:"Cocovira", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/4d/Cocovira_Icon.png"}, 
+  { name:"Coralina", value:"5K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/a/a2/Coralina_Icon.png"},
+  { name:"Dexyn", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/9/95/Dexyn_Icon.png"},
+  { name:"Dunvolth", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/8/8b/Dunvolth_Icon.png"},
+  { name:"Enkylous", value:"3K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/2/2d/Enkylous_Icon.png"},
+  { name:"Ferorex", value:"5K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/7/77/Ferorex_Icon.png"},
+  { name:"Geliklen", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/1/1e/Geliklen_Icon.png"},
+  { name:"Glacegar", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/e/e6/Glacegar_Icon.png"},
+  { name:"Howler", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/8/89/Howler_Icon.png"},
+  { name:"Karukiri", value:"10K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/4/43/Karukiri_Icon.png"},
+  { name:"Khepera", value:"2K", type:"world", img:"https://static.wikia.nocookie.net/dragon-adventures/images/3/34/Khepera_Icon.png"},
 ];
 
 const bonuses = {
   mutation: {
-    world: 50000,
-    season: 100000,
-    guild: 100000,
-    event: 50000
+    world: 250000,
+    season: 500000,
+    guild: 500000,
+    event: 250000
   },
   legColor: {
     world: 500000,
@@ -280,24 +332,22 @@ function parse(v){
   return parseFloat(v);
 }
 
-/* 🔥 FIXED MUTATION SYSTEM */
 function getFinalValue(item){
-  let base = parse(item.base.value);
-  let extra = 0;
+  let base=parse(item.base.value);
+  let extra = item.mutCount * bonuses.mutation;
 
-  // MUTATION STACK (0–5)
-  extra += (bonuses.mutation[item.base.type] || 0) * (item.mutCount || 0);
+  if(item.legColor) extra+=bonuses.legColor;
+  if(item.legEye) extra+=bonuses.legEye;
 
-  if(item.legColor)
-    extra += bonuses.legColor[item.base.type] || 0;
-
-  if(item.legEye)
-    extra += bonuses.legEye[item.base.type] || 0;
-
-  return base + extra;
+  return base+extra;
 }
 
-function draw(id,list){
+function render(){
+  draw("youSlots",you,1);
+  draw("themSlots",them,2);
+}
+
+function draw(id,list,side){
   let box=document.getElementById(id);
   box.innerHTML="";
 
@@ -311,11 +361,11 @@ function draw(id,list){
       slot.innerHTML=`
         <img src="${item.base.img}">
         <small>${item.base.name}</small>
-        <div>Mut: ${item.mutCount || 0}</div>
-        <button class="remove" onclick="remove(${id==='youSlots'?1:2},${i})">➖</button>
+        <div>Mut: ${item.mutCount}</div>
+        <button class="remove" onclick="remove(${side},${i})">➖</button>
       `;
     } else {
-      slot.innerHTML=`<button class="add" onclick="openPopup(${id==='youSlots'?1:2})">➕</button>`;
+      slot.innerHTML=`<button class="add" onclick="openPopup(${side})">➕</button>`;
     }
 
     box.appendChild(slot);
@@ -326,45 +376,37 @@ function openPopup(side){
   activeSide=side;
   popup.style.display="block";
   overlay.style.display="block";
-  renderDragons();
+  renderDragonList(dragons);
 }
 
 function closePopup(){
   popup.style.display="none";
-  optionsPopup.style.display="none";
   overlay.style.display="none";
+  optionsPopup.style.display="none";
 }
 
-function renderDragons(){
+function renderDragonList(list){
   dragonList.innerHTML="";
-
-  dragons.forEach(d=>{
+  list.forEach(d=>{
     let div=document.createElement("div");
     div.className="dragon-card";
-
     div.innerHTML=`<img src="${d.img}"><div>${d.name}</div>`;
-
-    div.onclick=()=>{
-      pendingDragon=d;
-      optionsPopup.style.display="block";
-    };
-
+    div.onclick=()=>{pendingDragon=d; optionsPopup.style.display="block";}
     dragonList.appendChild(div);
   });
 }
 
 function filterDragons(){
-  let v=searchBox.value.toLowerCase();
-  renderDragons(dragons.filter(d=>d.name.toLowerCase().includes(v)));
+  let val=searchBox.value.toLowerCase();
+  renderDragonList(dragons.filter(d=>d.name.toLowerCase().includes(val)));
 }
 
 function confirmAdd(){
-
   let item={
     base:pendingDragon,
-    mutCount:parseInt(mutCount.value),
-    legColor:legC.checked,
-    legEye:legE.checked
+    mutCount: parseInt(mutCount.value),
+    legColor: legC.checked,
+    legEye: legE.checked
   };
 
   if(activeSide===1 && you.length<MAX) you.push(item);
@@ -380,31 +422,29 @@ function remove(side,i){
 }
 
 function update(){
-
-  draw("youSlots",you);
-  draw("themSlots",them);
+  render();
 
   let y=you.reduce((s,i)=>s+getFinalValue(i),0);
   let t=them.reduce((s,i)=>s+getFinalValue(i),0);
 
   let diff=t-y;
 
+  let label = diff===0 ? "FAIR TRADE"
+    : Math.abs(diff)<1_000_000
+    ? (diff>0?"SMALL WIN":"SMALL LOSS")
+    : (diff>0?"WIN":"LOSS");
+
   let w=50+(diff/Math.max(y,t||1))*50;
   w=Math.max(0,Math.min(100,w));
 
   wfl.style.width=w+"%";
-  wfl.style.background=
-    diff>0?"#22c55e":
-    diff<0?"#ef4444":"#facc15";
+  wfl.style.background=diff>0?"#22c55e":diff<0?"#ef4444":"#facc15";
 
-  wflText.innerText=
-    diff===0?"FAIR TRADE":
-    Math.abs(diff)<1_000_000?
-    (diff>0?"SMALL WIN":"SMALL LOSS"):
-    (diff>0?"WIN":"LOSS");
+  wflText.innerText=label;
+  result.innerText=`You: ${y.toLocaleString()} | Them: ${t.toLocaleString()}`;
 }
 
-renderDragons();
+render();
 update();
 
 </script>
