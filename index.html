@@ -14,21 +14,24 @@
   }
 
   .container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     justify-content: center;
     gap: 80px;
-    align-items: flex-start;
     
     max-width: 900px;
-    margin: 20px auto;
+    margin: 20px auto 0 auto;
+
+    align-items: start;
   }
 
   .trade-box {
     background: rgba(255,255,255,0.04);
-    padding: 20px;
-    align-items: flex-start;
+    padding: 20px 20px 25px 18px;
+    border-radius: 15px;
 
-    width: 300px;
+    width: 100%
+    max-width: 300px;
     min-height: 520px;
     box-sizing: border-box;
 
